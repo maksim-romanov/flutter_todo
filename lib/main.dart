@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:todo/screens/homepage.dart';
+import 'package:todo/screens/home_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: const Homepage(),
+      home: const HomePage(),
     );
   }
 }
