@@ -50,10 +50,25 @@ class _HomePageState extends State<HomePage> {
                       future: _databaseHelper.getTasks(),
                       builder: (context, snapshot) => ListView.builder(
                         itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (context, index) => TaskCardWidget(
-                          // id: snapshot.data?[index].id,
-                          title: snapshot.data?[index].title,
-                          description: snapshot.data?[index].description,
+                        itemBuilder: (context, index) => GestureDetector(
+                          onTap: () {
+                            final task = snapshot.data?[index];
+                            if (task == null) return;
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TaskPage(task: task),
+                              ),
+                            ).then((value) {
+                              setState(() {});
+                            });
+                          },
+                          child: TaskCardWidget(
+                            // id: snapshot.data?[index].id,
+                            title: snapshot.data?[index].title,
+                            description: snapshot.data?[index].description,
+                          ),
                         ),
                       ),
                     ),
@@ -68,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const TaskPage(),
+                        builder: (context) => TaskPage(),
                       ),
                     ).then((value) {
                       setState(() {});

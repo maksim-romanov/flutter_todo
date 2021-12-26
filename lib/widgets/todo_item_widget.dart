@@ -24,8 +24,7 @@ class TodoItemWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(6.0),
               border: Border.all(
                 width: 1.5,
-                color:
-                    isDone ? const Color(0xFF7349fe) : const Color(0xFF86829d),
+                color: isDone ? const Color(0xFF7349fe) : const Color(0xFF86829d),
               ),
             ),
             child: const Image(

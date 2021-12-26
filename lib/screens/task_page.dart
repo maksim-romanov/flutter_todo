@@ -1,10 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:todo/helpers/database.dart';
 import 'package:todo/models/task.dart';
+import 'package:todo/models/todo.dart';
 import 'package:todo/widgets/todo_item_widget.dart';
 
-class TaskPage extends StatelessWidget {
-  const TaskPage({Key? key}) : super(key: key);
+class TaskPage extends StatefulWidget {
+  final Task? task;
+  const TaskPage({Key? key, this.task}) : super(key: key);
+
+  @override
+  State<TaskPage> createState() => _TaskPageState();
+}
+
+class _TaskPageState extends State<TaskPage> {
+  final _databaseHelper = DatabaseHelper();
+  String _tastTitle = '';
+  int _taskId = 0;
+
+  @override
+  void initState() {
+    if (widget.task != null) {
+      _tastTitle = widget.task?.title ?? '';
+      _taskId = widget.task?.id ?? 0;
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +56,11 @@ class TaskPage extends StatelessWidget {
                           // autofocus: true,
                           onSubmitted: (titleValue) async {
                             if (titleValue == '') return;
-                            final DatabaseHelper _databaseHelper = DatabaseHelper();
+                            if (widget.task != null) {
+                              print('Update Task');
+                              return;
+                            }
+
                             await _databaseHelper.insertTask(Task(title: titleValue));
                           },
                           style: const TextStyle(
@@ -43,6 +68,7 @@ class TaskPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF211551),
                           ),
+                          controller: TextEditingController()..text = _tastTitle,
                           decoration: const InputDecoration(
                             hintText: 'Enter Task Title',
                             border: InputBorder.none,
@@ -58,13 +84,70 @@ class TaskPage extends StatelessWidget {
                       hintText: 'Enter Description for the task...',
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const TodoItemWidget(
-                    text: 'Create your first task',
-                    isDone: false,
+                  // const SizedBox(height: 10),
+                  FutureBuilder<List<Todo>>(
+                    future: _databaseHelper.getTodos(_taskId),
+                    builder: (context, snapshot) => Expanded(
+                      child: ListView.builder(
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (context, index) {
+                          final todo = snapshot.data?[index];
+                          if (todo == null) return const Text('not found');
+
+                          return Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  // make is done
+                                },
+                                child: TodoItemWidget(
+                                  text: todo.title,
+                                  isDone: todo.isDone == 1,
+                                ),
+                              ),
+                              const SizedBox(height: 10.0),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  const TodoItemWidget(isDone: true),
+                  Row(
+                    children: [
+                      Container(
+                        width: 20.0,
+                        height: 20.0,
+                        margin: const EdgeInsets.only(right: 12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(6.0),
+                          border: Border.all(width: 1.5, color: const Color(0xFF86829d)),
+                        ),
+                        child: const Image(
+                          image: AssetImage('assets/images/check_icon.png'),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          onSubmitted: (todoTitle) async {
+                            final task = widget.task;
+
+                            if (todoTitle == '') return;
+                            if (task == null) {
+                              print('Create Task');
+                              return;
+                            }
+                            await _databaseHelper.insertTodo(Todo(title: todoTitle, taskId: _taskId));
+                            setState(() {});
+                          },
+                          decoration: const InputDecoration(
+                            hintText: 'Enter Todo item...',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
               Positioned(
