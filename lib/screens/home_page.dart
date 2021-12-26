@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo/helpers/database.dart';
+import 'package:todo/models/task.dart';
 import 'package:todo/screens/task_page.dart';
 import 'package:todo/widgets/task_card_widget.dart';
 
@@ -9,7 +11,14 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+// TaskCardWidget(
+//   title: 'Get Started',
+//   description:
+//       'Hello User! Welcome to WHAT_TODO app, this is a default task that you can edit or delete to start using the app.',
+// ),
 class _HomePageState extends State<HomePage> {
+  final _databaseHelper = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,21 +46,16 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Expanded(
-                    child: ListView(
-                      children: const [
-                        TaskCardWidget(
-                          title: 'Get Started',
-                          description:
-                              'Hello User! Welcome to WHAT_TODO app, this is a default task that you can edit or delete to start using the app.',
+                    child: FutureBuilder<List<Task>>(
+                      future: _databaseHelper.getTasks(),
+                      builder: (context, snapshot) => ListView.builder(
+                        itemCount: snapshot.data?.length ?? 0,
+                        itemBuilder: (context, index) => TaskCardWidget(
+                          // id: snapshot.data?[index].id,
+                          title: snapshot.data?[index].title,
+                          description: snapshot.data?[index].description,
                         ),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                        TaskCardWidget(),
-                      ],
+                      ),
                     ),
                   )
                 ],
@@ -66,7 +70,9 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                         builder: (context) => const TaskPage(),
                       ),
-                    );
+                    ).then((value) {
+                      setState(() {});
+                    });
                   },
                   child: Container(
                     // padding: const EdgeInsets.all(10.0),

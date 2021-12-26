@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todo/helpers/database.dart';
+import 'package:todo/models/task.dart';
 import 'package:todo/widgets/todo_item_widget.dart';
 
 class TaskPage extends StatelessWidget {
@@ -25,20 +27,23 @@ class TaskPage extends StatelessWidget {
                         },
                         child: const Padding(
                           padding: EdgeInsets.only(right: 20.0),
-                          child: Image(
-                              image: AssetImage(
-                                  'assets/images/back_arrow_icon.png')),
+                          child: Image(image: AssetImage('assets/images/back_arrow_icon.png')),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: TextField(
                           // autofocus: true,
-                          style: TextStyle(
+                          onSubmitted: (titleValue) async {
+                            if (titleValue == '') return;
+                            final DatabaseHelper _databaseHelper = DatabaseHelper();
+                            await _databaseHelper.insertTask(Task(title: titleValue));
+                          },
+                          style: const TextStyle(
                             fontSize: 26.0,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF211551),
                           ),
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'Enter Task Title',
                             border: InputBorder.none,
                           ),
