@@ -32,12 +32,14 @@ class TodoItemWidget extends StatelessWidget {
             ),
           ),
         ),
-        Text(
-          text ?? '(Unnamed Todo)',
-          style: TextStyle(
-            color: isDone ? const Color(0xFF211551) : const Color(0xFF86829d),
-            fontSize: 16.0,
-            fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+        Flexible(
+          child: Text(
+            text ?? '(Unnamed Todo)',
+            style: TextStyle(
+              color: isDone ? const Color(0xFF211551) : const Color(0xFF86829d),
+              fontSize: 16.0,
+              fontWeight: isDone ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         )
       ],
